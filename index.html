@@ -15,111 +15,45 @@
     <h1>Books page</h1>
     <div class="justify-content-center row">
         <div class="app-form col-6">
-            <form>
+            <form class="book-form">
                 <fieldset class="border p-2">
                     <legend class="w-auto">Add book in list</legend>
                     <div class="form-group">
-                        <label for="author">Author</label>
+                        <label for="author">Author <small class="text-danger">*</small></label>
                         <input type="text" class="form-control" name="author" id="author" placeholder="Joseph Brodsky">
                     </div>
                     <div class="form-group">
-                        <label for="bookName">Book title</label>
-                        <input type="text" class="form-control" name="bookName" id="bookName"
+                        <label for="bookName">Book title <small class="text-danger">*</small></label>
+                        <input type="text" class="form-control" name="bookTitle" id="bookName"
                                placeholder="The collection of poems">
                     </div>
 
                     <div class="form-group">
-                        <label for="pubDate">Publication date</label>
-                        <input type="text" class="form-control" name="pubDate" id="pubDate" placeholder="24.08.1996">
+                        <label for="pubDate">Publication date <small class="text-danger">*</small></label>
+                        <input type="date" class="form-control" name="pubDate" id="pubDate" placeholder="24.08.1996">
                     </div>
                     <div class="form-group">
-                        <label for="countPages">Quantity of pages</label>
+                        <label for="countPages">Quantity of pages <small class="text-danger">*</small></label>
                         <input type="text" class="form-control" name="countPages" id="countPages"
                                placeholder="Please input quantity of pages">
                     </div>
-                    <div class="btn-group">
-                        <button type="button" class="btn btn-primary">Save</button>
+                    <div class="mt-3 w-100 d-flex justify-content-end form-buttons">
+                        <button type="button" class="btn btn-success d-none edit">Save changes</button>
+                        <button type="button" class="ml-2 btn btn-light add">Add</button>
+                        <button type="button" class="ml-2 btn btn-secondary disable d-none cancel">Cancel</button>
                     </div>
                 </fieldset>
             </form>
         </div>
         <div class="list-books col-6">
             <ul class="list-group">
-                <li class="list-group-item list-group-item-action" aria-disabled="true">
-                    <div class="row d-flex">
-                        <div class="col-8 align-content-center">
-                            <small class="font-weight-bold">Joseph Brodsky</small>
-                            <span class="text-muted font-italic">The collection of poems</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="btn-group float-right">
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <button type="button" class="btn btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item list-group-item-action" aria-disabled="true">
-                    <div class="row d-flex">
-                        <div class="col-8 align-content-center">
-                            <small class="font-weight-bold">Joseph Brodsky</small>
-                            <span class="text-muted font-italic">The collection of poems</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="btn-group float-right">
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <button type="button" class="btn btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item list-group-item-action" aria-disabled="true">
-                    <div class="row d-flex">
-                        <div class="col-8 align-content-center">
-                            <small class="font-weight-bold">Joseph Brodsky</small>
-                            <span class="text-muted font-italic">The collection of poems</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="btn-group float-right">
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <button type="button" class="btn btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item list-group-item-action" aria-disabled="true">
-                    <div class="row d-flex">
-                        <div class="col-8 align-content-center">
-                            <small class="font-weight-bold">Joseph Brodsky</small>
-                            <span class="text-muted font-italic">The collection of poems</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="btn-group float-right">
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <button type="button" class="btn btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <li class="list-group-item list-group-item-action" aria-disabled="true">
-                    <div class="row d-flex">
-                        <div class="col-8 align-content-center">
-                            <small class="font-weight-bold">Joseph Brodsky</small>
-                            <span class="text-muted font-italic">The collection of poems</span>
-                        </div>
-                        <div class="col-4">
-                            <div class="btn-group float-right">
-                                <button type="button" class="btn btn-success">Edit</button>
-                                <button type="button" class="btn btn-danger">Remove</button>
-                            </div>
-                        </div>
-                    </div>
-                </li>
+
             </ul>
         </div>
     </div>
 </div>
 <script type="text/javascript" src="js/libraries/jquery-3.5.1.js"></script>
-<script type="text/javascript" src="js/App/index.js"></script>
+<script type="module" src="js/App/apiLocalStorage.js"></script>
+<script type="module" src="js/App/index.js"></script>
 </body>
 </html>
