@@ -179,6 +179,8 @@ $(document).ready(() => {
             $(this).removeClass('is-valid')
             $(this).removeClass('is-invalid')
         })
+        $(".book-form .edit").addClass('d-none')
+        $(".book-form .add").removeClass('d-none')
         $(".book-form .cancel").addClass('d-none')
     }
 
