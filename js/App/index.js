@@ -1,9 +1,6 @@
 import {getListBooks, removeBookByIdAPI, getBookByIdApi, setBookByIdAPI, addBookByIdAPI} from './apiLocalStorage.js'
 //Please take me on work! )))
 $(document).ready(() => {
-    const getSortArrayById = (arrObj) => {
-        return arrObj.sort((a, b) => a.id > b.id ? 1 : -1);
-    }
     const elemBook = (dataBook) =>{
         return $(`<li id="${dataBook.id}" class="list-group-item list-group-item-action" aria-disabled="true">
                         <div class="row d-flex">
@@ -20,6 +17,37 @@ $(document).ready(() => {
                     </div>
                     </li>`)
     }
+    /**
+     * @function getFormObj()
+     * @return {Object}
+     * @description return all fields book-form
+     * ***/
+    const getFormObj = () =>{
+        let dataForm = {};
+        $(".book-form").serializeArray().map(function (input) {
+            dataForm[input.name] = input.value;
+        });
+        return dataForm
+    }
+
+    /**
+     * @function getFormArray()
+     * @return {Array}
+     * @description return array objects {name:"...",value:"..."}
+     * **/
+    const getFormArray = () =>{
+       return  $(".book-form").serializeArray()
+    }
+
+    /**
+     * @function getSortArrayById()
+     * @return {Array}
+     * **/
+
+    const getSortArrayById = (arrObj) => {
+        return arrObj.sort((a, b) => a.id > b.id ? 1 : -1);
+    }
+
     const drawListBooks = (listBooks, rootElem) => {
         rootElem.html(listBooks.map(book => {
             return elemBook(book)
@@ -32,77 +60,86 @@ $(document).ready(() => {
     }
 
     const changeBook = (book, elem) => {
-        console.log(book, elem)
         elem.replaceWith(elemBook(book))
     }
     const formValidator = () => {
-        $('.book-form .add').addClass('btn-light')
-        let dataForm = {};
+        let dataForm = getFormObj();
         let allInput = [];
-        $(".book-form").serializeArray().map(function (input) {
-            dataForm[input.name] = input.value;
-        });
+
         for (let key in dataForm) {
-            if (dataForm[key] != '') {
+            if (dataForm[key] !== '') {
                 allInput.push(key)
             }
         }
 
-        if (allInput.length != 0) {
-            $('.book-form .cancel').removeClass('d-none').addClass('visible')
-        }
-
-        if (allInput.length == $(".book-form").serializeArray().length) {
-            $('.book-form .add').removeClass('btn-light').addClass('btn-primary enable')
-            $(event.target).removeClass('enable').addClass('disable')
-        }
+        return allInput.length === getFormArray().length;
     }
-    $('.book-form input').keyup(() => formValidator())
 
-    const dangerLightInput = () => {
+
+    const formInputsLight = () => {
         const inputsForm = $(".book-form input")
         inputsForm.each(function () {
             const elem = $(this)
-            if (elem.val() == '') {
+            if (elem.val() === '') {
                 elem.removeClass('is-valid').addClass('is-invalid')
             } else {
                 elem.removeClass('is-invalid').addClass('is-valid')
             }
         })
     }
-
-    $('.book-form .add').on('click', (event) => {
-        if ($(event.target).hasClass('enable')) {
-            const dataForm = {};
-            $(".book-form").serializeArray().map(function (input) {
-                dataForm[input.name] = input.value;
-            })
-            const arrBooks = getSortArrayById(getListBooks())
-            const lastId = arrBooks[arrBooks.length - 1].id
-            addBook(dataForm, lastId + 1)
+    const formButtonsLight = (validator) =>{
+        if (validator()) {
+            $(".book-form .add").removeClass('btn-light').addClass('btn-primary')
         }
-        $(event.target).removeClass('enable').addClass('disable')
-        dangerLightInput()
+    }
+    $('.book-form').keyup(()=>{
+        formButtonsLight(formValidator)
+    })
+    $('.book-form input').change(()=>{
+        formInputsLight()
+        formButtonsLight(formValidator)
     })
 
-    const addBook = async (formData, newId) => {
+    $('.book-form .add').on('click', (event) => {
+        if (!formValidator()) {
+            alert('Error! Please fill in all fields.')
+            formInputsLight()
+            return
+        }
+        const dataForm = {};
+        $(".book-form").serializeArray().map(function (input) {
+            dataForm[input.name] = input.value;
+        })
+        const arrBooks = getSortArrayById(getListBooks())
+        const lastId = ()=>{if(arrBooks[arrBooks.length - 1].id){return arrBooks[arrBooks.length - 1].id} else{return 0}}
+        addBook(dataForm, lastId + 1)
+        $(event.target).removeClass('enable').addClass('disable')
+    })
+
+    const addBook = (formData, newId) => {
         let data = formData
         data.id = newId
         data.isBook = true
-        await addBookByIdAPI(data)
-        const newBook = getBookByIdApi(newId)
-        drawBook(JSON.parse(newBook), $('.list-group'))
-        $('.book-form .add').removeClass('btn-primary').addClass('btn-light')
-        clearForm()
+        addBookByIdAPI(data).then(()=>{
+            const newBook = getBookByIdApi(newId)
+            drawBook(JSON.parse(newBook), $('.list-group'))
+            $('.book-form .add').removeClass('btn-primary').addClass('btn-light')
+            clearForm()
+        })
     }
 
-    const removeBook = async (id, elemLi) => {
-        await removeBookByIdAPI(id)
-        $(elemLi).remove()
+    const removeBook = (id, elemLi) => {
+        removeBookByIdAPI(id).then(()=>{
+            if(id == $('.book-form').attr('id')){
+                $('.book-form').removeAttr('id')
+            }
+            $(".book-form .edit").addClass('d-none')
+            $(".book-form .add").removeClass('d-none btn-primary').addClass('btn-light')
+            $(elemLi).remove()
+        })
     }
 
     const editBook = (id) => {
-        clearForm()
         let book = getBookByIdApi(id)
         book = JSON.parse(book)
         $('input[name$="author"]').val(book.author)
@@ -113,18 +150,16 @@ $(document).ready(() => {
         $('.form-buttons .add').addClass('d-none')
         $('.form-buttons .edit').removeClass('d-none').addClass('visible')
         $('.form-buttons .cancel').removeClass('d-none').addClass('visible')
-
         $('.book-form').attr('id', book.id)
+        formInputsLight()
     }
     const saveChangesEditBook = () =>{
         const form = $(".book-form")
         const id = form.attr('id')
-        let dataForm = {};
+        let dataForm = getFormObj()
         dataForm.isBook = true
         dataForm.id = id
-        form.serializeArray().map(function (input) {dataForm[input.name] = input.value;});
         setBookByIdAPI(id, JSON.stringify(dataForm)).then(()=>{
-            console.log(JSON.parse(getBookByIdApi(id)))
             changeBook(JSON.parse(getBookByIdApi(id)), $(`.list-books ul [id$="${id}"] `))
         })
         $('.form-buttons .edit').removeClass('visible').addClass('d-none')
@@ -139,17 +174,21 @@ $(document).ready(() => {
         $('input[name$="bookTitle"]').val('')
         $('input[name$="pubDate"]').val('')
         $('input[name$="countPages"]').val('')
+        $(".book-form").removeAttr('id')
         $(".book-form input").each(function () {
             $(this).removeClass('is-valid')
+            $(this).removeClass('is-invalid')
         })
+        $(".book-form .cancel").addClass('d-none')
     }
-    $('.book-form .cancel').on('click', () => clearForm())
+
+    $('.book-form .cancel').on('click', () => {clearForm();
+    formButtonsLight(formValidator)})
 
     $('.list-books ul').bind('click', function (event) {
         const buttonClick = $(event.target)
         const elemUl = buttonClick.parents('li')
         const id = buttonClick.parents('li').attr('id')
-        console.log(buttonClick, elemUl, id)
         switch (true) {
             case buttonClick.hasClass('remove'):
                 removeBook(id, elemUl)

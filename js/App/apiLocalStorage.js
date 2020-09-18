@@ -16,14 +16,13 @@ const getBookByIdApi = (id) =>{
     return localStorage.getItem(id)
 }
 
-const removeBookByIdAPI = (id) =>{
+const removeBookByIdAPI = async (id) =>{
     localStorage.removeItem(id)
-    return true
 }
 const setBookByIdAPI = async (id, newData) =>{
     return localStorage.setItem(id, newData)
 }
-const addBookByIdAPI = (data) =>{
+const addBookByIdAPI = async (data) =>{
     localStorage.setItem(data.id, JSON.stringify(data))
 }
 export {getListBooks,removeBookByIdAPI, setBookByIdAPI, getBookByIdApi,addBookByIdAPI}
